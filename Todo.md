@@ -27,3 +27,8 @@ Visual Studio Code
 ```
 winget install --id Microsoft.VisualStudioCode -e
 ```
+
+Rust
+```
+winget install Rustlang.Rust.MSVC
+```
