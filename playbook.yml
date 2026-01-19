@@ -1,7 +1,23 @@
-
+---
 - hosts: all
   gather_facts: yes
-  become: true
+  vars:
+    ansible_connection: winrm
+    ansible_winrm_transport: ntlm
+    ansible_winrm_port: 5985
+    ansible_winrm_scheme: http
+    ansible_winrm_server_cert_validation: ignore
 
   roles:
-    - Common
+    - role: Common
+      tags: [common, powershell7]
+    - role: Development
+      tags: [development, git, vscode, rust, python, perl, openjdk, buildtools]
+    - role: AI
+      tags: [ai, cursor, antigravity, claude]
+    - role: Utilities
+      tags: [utilities, winscp, putty, terminal, 7zip, windirstat]
+    - role: Browsers
+      tags: [browsers, chrome]
+    - role: Other
+      tags: [other, obsidian, burpsuite]

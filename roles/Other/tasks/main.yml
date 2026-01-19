@@ -1,0 +1,27 @@
+---
+- name: Other - Update winget sources
+  ansible.windows.win_command: winget.exe source update
+  register: winget_source_update
+  changed_when: "'Updated' in winget_source_update.stdout or 'Updated' in winget_source_update.stderr"
+  failed_when: false
+  tags: [other, obsidian, burpsuite]
+
+- name: Other - Install Obsidian
+  ansible.windows.win_command: winget install --id Obsidian.Obsidian --source winget --accept-source-agreements --accept-package-agreements --scope machine
+  register: obsidian_install
+  failed_when: 
+    - obsidian_install.rc != 0
+    - "'No available upgrade found' not in obsidian_install.stdout"
+    - "'No newer package versions are available' not in obsidian_install.stdout"
+  tags: [other, obsidian]
+
+- name: Other - Install Burp Suite
+  ansible.windows.win_command: winget install --id PortSwigger.BurpSuiteCommunity --source winget --accept-source-agreements --accept-package-agreements --scope machine
+  register: burpsuite_install
+  failed_when: 
+    - burpsuite_install.rc != 0
+    - "'No available upgrade found' not in burpsuite_install.stdout"
+    - "'No newer package versions are available' not in burpsuite_install.stdout"
+    - "'No package found matching input criteria' not in burpsuite_install.stdout"
+  ignore_errors: true
+  tags: [other, burpsuite]

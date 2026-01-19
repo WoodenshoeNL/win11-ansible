@@ -1,0 +1,16 @@
+---
+- name: Browsers - Update winget sources
+  ansible.windows.win_command: winget.exe source update
+  register: winget_source_update
+  changed_when: "'Updated' in winget_source_update.stdout or 'Updated' in winget_source_update.stderr"
+  failed_when: false
+  tags: [browsers, chrome]
+
+- name: Browsers - Install Google Chrome
+  ansible.windows.win_command: winget install --id Google.Chrome --source winget --accept-source-agreements --accept-package-agreements --scope machine
+  register: chrome_install
+  failed_when: 
+    - chrome_install.rc != 0
+    - "'No available upgrade found' not in chrome_install.stdout"
+    - "'No newer package versions are available' not in chrome_install.stdout"
+  tags: [browsers, chrome]

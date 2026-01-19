@@ -1,18 +1,16 @@
+---
 - name: Powershell7 - Make sure WinGet is ready (update sources)
   ansible.windows.win_command: winget.exe source update
   register: winget_source_update
   changed_when: "'Updated' in winget_source_update.stdout or 'Updated' in winget_source_update.stderr"
   failed_when: false
+  tags: [powershell7]
 
 - name: Powershell7 - Install/upgrade PowerShell 7 with winget
-  community.windows.win_winget:
-    # The canonical id for PowerShell 7 in winget:
-    id: Microsoft.Powershell
-    state: present
-    # Silently accept license/source agreements
-    accept_source_agreements: true
-    accept_package_agreements: true
-    # Install for all users; requires admin
-    install_scope: machine
-    # Upgrade to latest 7.x if present
-    upgrade: true
+  ansible.windows.win_command: winget install --id Microsoft.PowerShell --source winget --accept-source-agreements --accept-package-agreements --scope machine
+  register: powershell7_install
+  failed_when: 
+    - powershell7_install.rc != 0
+    - "'No available upgrade found' not in powershell7_install.stdout"
+    - "'No newer package versions are available' not in powershell7_install.stdout"
+  tags: [powershell7]

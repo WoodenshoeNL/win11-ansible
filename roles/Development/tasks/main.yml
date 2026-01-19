@@ -1,0 +1,74 @@
+---
+- name: Development - Update winget sources
+  ansible.windows.win_command: winget.exe source update
+  register: winget_source_update
+  changed_when: "'Updated' in winget_source_update.stdout or 'Updated' in winget_source_update.stderr"
+  failed_when: false
+  tags: [development, git, vscode, rust, python, perl, openjdk, buildtools]
+
+- name: Development - Install Git
+  ansible.windows.win_command: winget install --id Git.Git --source winget --accept-source-agreements --accept-package-agreements --scope machine
+  register: git_install
+  failed_when: 
+    - git_install.rc != 0
+    - "'No available upgrade found' not in git_install.stdout"
+    - "'No newer package versions are available' not in git_install.stdout"
+  tags: [development, git]
+
+- name: Development - Install Visual Studio Code
+  ansible.windows.win_command: winget install --id Microsoft.VisualStudioCode --source winget --accept-source-agreements --accept-package-agreements --scope machine
+  register: vscode_install
+  failed_when: 
+    - vscode_install.rc != 0
+    - "'No available upgrade found' not in vscode_install.stdout"
+    - "'No newer package versions are available' not in vscode_install.stdout"
+  tags: [development, vscode]
+
+- name: Development - Install Rust
+  ansible.windows.win_command: winget install --id Rustlang.Rust.MSVC --source winget --accept-source-agreements --accept-package-agreements --scope machine
+  register: rust_install
+  failed_when: 
+    - rust_install.rc != 0
+    - "'No applicable installer found' not in rust_install.stdout"
+  ignore_errors: true
+  tags: [development, rust]
+
+- name: Development - Install Python 3.14
+  ansible.windows.win_command: winget install --id Python.Python.3.14 --source winget --accept-source-agreements --accept-package-agreements --scope machine
+  register: python_install
+  failed_when: 
+    - python_install.rc != 0
+    - "'No available upgrade found' not in python_install.stdout"
+    - "'No newer package versions are available' not in python_install.stdout"
+  tags: [development, python]
+
+- name: Development - Install Perl
+  ansible.windows.win_command: winget install --id StrawberryPerl.StrawberryPerl --source winget --accept-source-agreements --accept-package-agreements --scope machine
+  register: perl_install
+  failed_when: 
+    - perl_install.rc != 0
+    - "'No available upgrade found' not in perl_install.stdout"
+    - "'No newer package versions are available' not in perl_install.stdout"
+    - "'No applicable installer found' not in perl_install.stdout"
+  ignore_errors: true
+  tags: [development, perl]
+
+- name: Development - Install OpenJDK 17
+  ansible.windows.win_command: winget install --id ojdkbuild.openjdk.17.jdk --source winget --accept-source-agreements --accept-package-agreements --scope machine
+  register: openjdk_install
+  failed_when: 
+    - openjdk_install.rc != 0
+    - "'No available upgrade found' not in openjdk_install.stdout"
+    - "'No newer package versions are available' not in openjdk_install.stdout"
+    - "'No applicable installer found' not in openjdk_install.stdout"
+  ignore_errors: true
+  tags: [development, openjdk]
+
+- name: Development - Install Windows Build Tools
+  ansible.windows.win_command: winget install --id Microsoft.VisualStudio.2022.BuildTools --source winget --accept-source-agreements --accept-package-agreements --scope machine --override "--wait --passive --add Microsoft.VisualStudio.Workload.VCTools --includeRecommended"
+  register: buildtools_install
+  failed_when: 
+    - buildtools_install.rc != 0
+    - "'No available upgrade found' not in buildtools_install.stdout"
+    - "'No newer package versions are available' not in buildtools_install.stdout"
+  tags: [development, buildtools]

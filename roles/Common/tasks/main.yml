@@ -1,3 +1,4 @@
-
+---
 - name: Install Powershell 7
   import_tasks: Powershell7.yml
+  tags: [powershell7]
